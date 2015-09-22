@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <!-- Meta -->
+        <title>Onboarded Example - Customer Feedback Button</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="description" content="Onboarded">
+        <meta name="author" content="Onboarded">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Styles -->
+		<link rel="stylesheet" href="./css/style.css" type="text/css" media="screen">
+	</head>
+	<body>
+		<div id="onboarded-button">
+			<span>&phone;</span>
+		</div>
+		<!-- Page Markup -->
+		<div class="wrapper">
+			<div class="header">
+				<a class="button" href="#">
+					<span>Button 1</span>
+				</a>
+				<a class="button" href="#">
+					<span>Button 2</span>
+				</a>
+				<a class="button" href="#" id="exampleButtonId">
+					<span>Button 3</span>
+				</a>
+				<a class="button" href="#">
+					<span>Button 4</span>
+				</a>
+			</div>
+			<div class="main">
+				<div class="top">
+					<div class="thing">1</div>
+					<div class="thing">2</div>
+					<div class="thing">3</div>
+					<div class="thing">4</div>
+					<div class="thing">5</div>
+					<div class="thing">6</div>
+					<div class="thing">7</div>
+					<div class="thing" id="anotherExampleButton">8</div>
+				</div>
+				<div class="bottom">
+					<div class="thing">1</div>
+					<div class="thing">2</div>
+					<div class="thing">3</div>
+					<div class="thing">4</div>
+					<div class="thing">5</div>
+					<div class="thing">6</div>
+					<div class="thing">7</div>
+					<div class="thing">8</div>
+				</div>
+			</div>
+			<div class="footer-space"></div>
+			<div class="footer">
+				<span>Footer</span>
+			</div>
+		</div>
+
+		<!-- Onboarded Flow Starts Here -->
+		<div data-onboarded-token="FaVvOZ2gl7pQc1exetNnjA" style="display: none;">
+			<div data-onboarded-flow="Customer Feedback Flow v.4" class="flow">
+				<div data-step="Feedback Form" class="step">
+					<div class="zeroed">
+						<span class="close-button">x</span>
+					</div>
+					<h3>Have questions, comments, or want a demo?</h3>
+					<h6>We'd love to hear from you!</h6>
+					<input id="emailInput" type="email" data-name="email-address" placeholder="you@example.com">
+					<div class="zeroed">
+						<div class="checkmark checkmark-one hidden">&check;</div>
+					</div>
+					<div class="zeroed">
+						<div class="checkmark checkmark-two hidden">&check;</div>
+					</div>
+					<textarea id="textareaInput" data-name="comment" placeholder="Type your feedback here..."></textarea>
+					<section>
+						<button id="submit-feedback" class="disabled" data-name="Submit" data-action-next="Thanks">Submit Feedback</button>
+						<p>Powered by <a class="blue" href="https://www.getonboarded.com" target="_blank">Onboarded</a></p>
+					</section>
+				</div>
+				<div data-step="Thanks" class="step">
+					<h3 class="green">Thank you for your feedback!</h3>
+					<h6>We will get back to you as soon as possible.</h6>
+					<section>
+						<button id="end-flow-button" data-name="End Flow" data-action-complete>Finish</button>
+					</section>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://d237d8mq680mpf.cloudfront.net/onboarded-js/latest/onboarded-js.min.js"
+				data-style-overlay-dismissable="true"
+				data-verbose
+				data-flow-auto-start="false"
+				data-finished-loading="myCallback">
+		</script>
+
+		<script>
+			window.myCallback = function () {
+				// After done loading the plugin and its dependencies, retrieve the Onboarded flow
+				ob = Onboarded.retrieve();
+				$(document)
+					.on("click", "#onboarded-button", function (event) {
+						// Start the flow
+						ob.startFlow({ skipApiCheck: true });
+					})
+					.on("onboarded:flow:onStart", function (event, flow) {
+						// Hide Onboarded Button
+						$("#onboarded-button").addClass("hidden");
+					})
+					.on("keyup", "#emailInput, #textareaInput", function (event) {
+						// Perform validation
+						if ( ($("#emailInput").val() == "") && ($("#textareaInput").val() == "") ) {
+							// uncheck both fields
+							$(".checkmark-one").addClass("hidden");
+							$(".checkmark-two").addClass("hidden");
+							console.log("Email and comment are empty");
+							$("#submit-feedback").addClass("disabled");
+						}
+						else if ($("#emailInput").val() == "") {
+							// Checkmark textarea
+							$(".checkmark-one").addClass("hidden");
+							$(".checkmark-two").removeClass("hidden");
+							console.log("Email is empty");
+							$("#submit-feedback").addClass("disabled");
+						}
+						else if ($("#textareaInput").val() == "") {
+							// Checkmark textfield
+							$(".checkmark-one").removeClass("hidden");
+							$(".checkmark-two").addClass("hidden");
+							console.log("Comment is empty");
+							$("#submit-feedback").addClass("disabled");
+						}
+						else {
+							// Checkmark both fields
+							$(".checkmark-one").removeClass("hidden");
+							$(".checkmark-two").removeClass("hidden");
+							console.log("Ready to submit");
+							$("#submit-feedback").removeClass("disabled");
+						}
+					})
+					.on("click", "#end-flow-button, .close-button", function (event) {
+						// Reset flow whenever its completed via end button or close button, show Onboarded Button, hide checkmarks
+						$(".checkmark-one, .checkmark-two").addClass("hidden");
+						$("#onboarded-button").removeClass("hidden");
+						ob.resetFlow().dismissFlow();
+					})
+					.on("onboarded:flow:afterDismissal", function (event, flow, step) {
+						// Reset flow whenever its dismissed, show Onboarded Button, hide checkmarks
+						$(".checkmark-one, .checkmark-two").addClass("hidden");
+						$("#onboarded-button").removeClass("hidden");
+						ob.resetFlow().dismissFlow();
+					})
+			}
+		</script>
+	</body>
+</html>
